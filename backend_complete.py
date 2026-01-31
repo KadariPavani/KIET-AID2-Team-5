@@ -226,6 +226,21 @@ class ViolationResponse(BaseModel):
     timestamp: datetime
     image_path: Optional[str] = None
 
+class ContactCreate(BaseModel):
+    name: str = Field(..., min_length=2, max_length=100)
+    email: EmailStr
+    subject: str = Field(..., min_length=3, max_length=200)
+    message: str = Field(..., min_length=10, max_length=2000)
+
+class ContactResponse(BaseModel):
+    id: str
+    name: str
+    email: str
+    subject: str
+    message: str
+    created_at: datetime
+    status: str = "pending"
+
 # ==================== AUTH HELPER FUNCTIONS ====================
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -2088,6 +2103,89 @@ async def login(form_data: UserLogin):
             "created_at": user["created_at"]
         }
     }
+
+# ==================== CONTACT FORM ENDPOINTS ====================
+
+@app.post("/api/contact", response_model=ContactResponse)
+async def submit_contact(contact_data: ContactCreate):
+    """Submit contact form and store in database"""
+    if database is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database not available"
+        )
+    
+    try:
+        contact_doc = {
+            "name": contact_data.name,
+            "email": contact_data.email,
+            "subject": contact_data.subject,
+            "message": contact_data.message,
+            "created_at": datetime.utcnow(),
+            "status": "pending"
+        }
+        
+        result = await database.contacts.insert_one(contact_doc)
+        contact_doc["_id"] = result.inserted_id
+        
+        logger.info(f"New contact submission from: {contact_data.email}")
+        
+        return {
+            "id": str(contact_doc["_id"]),
+            "name": contact_doc["name"],
+            "email": contact_doc["email"],
+            "subject": contact_doc["subject"],
+            "message": contact_doc["message"],
+            "created_at": contact_doc["created_at"],
+            "status": contact_doc["status"]
+        }
+    except Exception as e:
+        logger.error(f"Failed to save contact: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to submit contact form"
+        )
+
+@app.get("/api/contacts")
+async def get_contacts(
+    limit: int = 50,
+    skip: int = 0,
+    status: Optional[str] = None,
+    current_user: dict = Depends(get_current_active_user)
+):
+    """Get all contact submissions (admin only)"""
+    if database is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database not available"
+        )
+    
+    try:
+        query = {}
+        if status:
+            query["status"] = status
+        
+        cursor = database.contacts.find(query).sort("created_at", -1).skip(skip).limit(limit)
+        contacts = await cursor.to_list(length=limit)
+        
+        return [
+            {
+                "id": str(c["_id"]),
+                "name": c["name"],
+                "email": c["email"],
+                "subject": c["subject"],
+                "message": c["message"],
+                "created_at": c["created_at"].isoformat(),
+                "status": c.get("status", "pending")
+            }
+            for c in contacts
+        ]
+    except Exception as e:
+        logger.error(f"Failed to fetch contacts: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch contacts"
+        )
 
 @app.post("/api/auth/login/form")
 async def login_form(form_data: OAuth2PasswordRequestForm = Depends()):

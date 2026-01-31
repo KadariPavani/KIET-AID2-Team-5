@@ -465,8 +465,9 @@ const Monitoring = () => {
           const violationType = data.violation_type.replace('_', ' ').toUpperCase();
           showToast(`Violation detected on Stream ${data.stream_id + 1}: ${violationType}`, 'error');
           
-          // Play sound alert
-          const audio = new Audio('https://www.soundjay.com/buttons/beep-07a.mp3');
+          // Play notification alert sound
+          const audio = new Audio('https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3');
+          audio.volume = 0.7;
           audio.play().catch(error => {
             console.error('Error playing sound:', error);
           });
