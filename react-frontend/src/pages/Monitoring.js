@@ -465,12 +465,41 @@ const Monitoring = () => {
           const violationType = data.violation_type.replace('_', ' ').toUpperCase();
           showToast(`Violation detected on Stream ${data.stream_id + 1}: ${violationType}`, 'error');
           
-          // Play notification alert sound
-          const audio = new Audio('https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3');
-          audio.volume = 0.7;
-          audio.play().catch(error => {
-            console.error('Error playing sound:', error);
-          });
+          // Play notification alert sound using Web Audio API
+          try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Notification-style beep pattern
+            oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // A5 note
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+            
+            // Second beep
+            setTimeout(() => {
+              const osc2 = audioContext.createOscillator();
+              const gain2 = audioContext.createGain();
+              osc2.connect(gain2);
+              gain2.connect(audioContext.destination);
+              osc2.frequency.setValueAtTime(1100, audioContext.currentTime); // Higher pitch
+              osc2.type = 'sine';
+              gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
+              gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+              osc2.start(audioContext.currentTime);
+              osc2.stop(audioContext.currentTime + 0.3);
+            }, 150);
+          } catch (audioError) {
+            console.error('Error playing notification sound:', audioError);
+          }
         }
       } catch (error) {
         console.error('Error parsing WebSocket message:', error);
