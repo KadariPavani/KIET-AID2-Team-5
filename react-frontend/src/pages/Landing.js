@@ -4,12 +4,48 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AuthModal from '../components/AuthModal';
 import { useAuth } from '../context/AuthContext';
+import { useConfig } from '../context/ConfigContext';
 
 const Landing = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authTab, setAuthTab] = useState('login');
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { API_BASE_URL } = useConfig();
+  
+  // Contact form state
+  const [contactForm, setContactForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+
+  const handleContactChange = (e) => {
+    const { name, value } = e.target;
+    setContactForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contactForm)
+      });
+      if (response.ok) {
+        setSubmitStatus('success');
+        setContactForm({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Redirect if already authenticated
   React.useEffect(() => {
@@ -141,31 +177,52 @@ const Landing = () => {
 
         <section id="contact" className="grid-section">
           <div className="section-title">
-            <i className="fas fa-envelope-open-text"></i>
-            Contact & Reach Us
+            <i className="fas fa-envelope"></i>
+            Contact Us
           </div>
-          <div className="card">
-            <p>
-              For project-related queries, collaboration, or academic discussions, feel
-              free to reach out to the team.
-            </p>
-            <div className="contact-details-grid">
-              <div className="contact-item">
-                <h4 className="contact-label">Email</h4>
-                <p><a href="mailto:support@tms.com">support@tms.com</a></p>
+          <div className="card contact-card">
+            {submitStatus === 'success' ? (
+              <div className="success-message">
+                <div className="success-icon">
+                  <i className="fas fa-check-circle"></i>
+                </div>
+                <h3>Thank You!</h3>
+                <p>Your message has been successfully submitted. We'll get back to you soon.</p>
+                <button className="btn btn-primary" onClick={() => setSubmitStatus(null)}>
+                  Send Another Message
+                </button>
               </div>
-              <div className="contact-item">
-                <h4 className="contact-label">Project Dashboard</h4>
-                <p><a href="/dashboard">Open Monitoring Dashboard (after login)</a></p>
-              </div>
-              <div className="contact-item">
-                <h4 className="contact-label">Get Started</h4>
-                <p>
-                  Click the <strong>Get Started</strong> button in the top-right
-                  to sign up or log in and access the secure dashboard.
-                </p>
-              </div>
-            </div>
+            ) : (
+              <form onSubmit={handleContactSubmit} className="landing-contact-form">
+                {submitStatus === 'error' && (
+                  <div className="error-alert">
+                    <i className="fas fa-exclamation-circle"></i>
+                    Failed to submit. Please try again.
+                  </div>
+                )}
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="name"><i className="fas fa-user"></i> Name</label>
+                    <input type="text" id="name" name="name" value={contactForm.name} onChange={handleContactChange} placeholder="Your name" required />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="email"><i className="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="email" name="email" value={contactForm.email} onChange={handleContactChange} placeholder="Your email" required />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="subject"><i className="fas fa-tag"></i> Subject</label>
+                  <input type="text" id="subject" name="subject" value={contactForm.subject} onChange={handleContactChange} placeholder="What is this regarding?" required />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="message"><i className="fas fa-comment-alt"></i> Message</label>
+                  <textarea id="message" name="message" value={contactForm.message} onChange={handleContactChange} placeholder="Write your message here..." rows="4" required></textarea>
+                </div>
+                <button type="submit" className="btn btn-primary btn-submit" disabled={isSubmitting}>
+                  {isSubmitting ? (<><i className="fas fa-spinner fa-spin"></i> Sending...</>) : (<><i className="fas fa-paper-plane"></i> Send Message</>)}
+                </button>
+              </form>
+            )}
           </div>
         </section>
       </main>
