@@ -5,9 +5,9 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-content">
         <div className="footer-section">
-          <h4 className="footer-heading">
-            <i className="fas fa-traffic-light"></i> TrafficFlow
-          </h4>
+          <div className="footer-brand">
+            <img src="/Logo.png" alt="TrafficFlow Logo" className="footer-logo" />
+          </div>
           <p className="footer-text">
             Intelligent traffic monitoring solutions for smarter, safer cities.
           </p>

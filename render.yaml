@@ -1,0 +1,21 @@
+# Render deployment configuration for TrafficFlow Backend
+# This file tells Render how to build and run the FastAPI backend
+
+services:
+  - type: web
+    name: trafficflow-api
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend_complete:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: MONGODB_URL
+        sync: false  # Set this in Render dashboard
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"
+    healthCheckPath: /health

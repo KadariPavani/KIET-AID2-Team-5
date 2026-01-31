@@ -37,6 +37,8 @@ const Landing = () => {
         setSubmitStatus('success');
         setContactForm({ name: '', email: '', subject: '', message: '' });
       } else {
+        const errorData = await response.json();
+        console.error('Contact form error:', errorData);
         setSubmitStatus('error');
       }
     } catch (error) {
@@ -69,7 +71,13 @@ const Landing = () => {
       <Navbar isDashboard={false} />
       
       <main className="main-content landing-page">
-        <section id="home" className="landing-container">
+        <section 
+          id="home" 
+          className="landing-container"
+          style={{
+            backgroundImage: `linear-gradient(135deg, rgba(10, 25, 41, 0.85) 0%, rgba(19, 47, 76, 0.88) 100%), url(${process.env.PUBLIC_URL}/image.png)`
+          }}
+        >
           <div className="landing-hero">
             <div className="hero-logo">
               <div className="logo-large">
