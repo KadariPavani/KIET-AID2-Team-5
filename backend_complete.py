@@ -90,7 +90,10 @@ app.add_middleware(
         "http://localhost:8000",
         "http://127.0.0.1:8000",
         "http://127.0.0.1:3000",  # Alternative localhost
-        "https://trafficflow.onrender.com",  # Add your actual Render URL
+        "https://trafficflow.onrender.com",  # Render backend URL
+        "https://trafficflow-nine.vercel.app",  # Vercel frontend URL
+        "https://trafficflow.vercel.app",  # Alternative Vercel URL
+        "https://trafficflow-aid2-team5.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
