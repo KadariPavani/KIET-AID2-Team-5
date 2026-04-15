@@ -72,12 +72,42 @@ let violationsOverTimeChart = null;
 let analyticsDateRange = 'all';
 
 // ==================== UTILITIES ====================
+// Toast cooldown — violation toasts throttled to max one per 5 seconds.
+let _lastViolationToastTime = 0;
+let _pendingViolationCount = 0;
+let _pendingViolationTimer = null;
+const TOAST_COOLDOWN_MS = 5000;
+
 function showToast(message, type = 'success') {
+    const isViolation = type === 'error' && message.toLowerCase().includes('violation');
+
+    if (isViolation) {
+        const now = Date.now();
+        if (now - _lastViolationToastTime < TOAST_COOLDOWN_MS) {
+            _pendingViolationCount++;
+            if (!_pendingViolationTimer) {
+                _pendingViolationTimer = setTimeout(() => {
+                    if (_pendingViolationCount > 0) {
+                        _showToastDom(`+${_pendingViolationCount} more violation(s) detected`, 'error');
+                        _pendingViolationCount = 0;
+                    }
+                    _pendingViolationTimer = null;
+                }, TOAST_COOLDOWN_MS - (now - _lastViolationToastTime));
+            }
+            return;
+        }
+        _lastViolationToastTime = now;
+    }
+
+    _showToastDom(message, type);
+}
+
+function _showToastDom(message, type) {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.textContent = message;
     document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
+    setTimeout(() => toast.remove(), 4000);
 }
 
 function getAuthHeaders() {

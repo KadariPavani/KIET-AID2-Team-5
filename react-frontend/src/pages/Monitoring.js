@@ -408,7 +408,7 @@ const StreamCard = ({ streamId, isMain, onSwap, API_BASE_URL, getAuthHeaders, ST
 
 const Monitoring = () => {
   const { getAuthHeaders } = useAuth();
-  const { API_BASE_URL, STREAM_POLL_INTERVAL } = useConfig();
+  const { API_BASE_URL, WS_BASE_URL, STREAM_POLL_INTERVAL } = useConfig();
 
   /**
    * SOURCE OF TRUTH
@@ -445,79 +445,71 @@ const Monitoring = () => {
     showToast(`Stream ${clickedStreamId + 1} moved to main view`, 'success');
   };
 
-  // WebSocket for real-time violation notifications
+  // WebSocket for real-time violation notifications (with auto-reconnect)
   useEffect(() => {
-    const wsProtocol = API_BASE_URL.startsWith('https') ? 'wss' : 'ws';
-    const wsHost = new URL(API_BASE_URL).host;
-    const wsUrl = `${wsProtocol}://${wsHost}/ws`;
+    let ws = null;
+    let reconnectTimer = null;
+    let isMounted = true;
 
-    const ws = new WebSocket(wsUrl);
+    const connect = () => {
+      if (!isMounted) return;
+      const wsUrl = `${WS_BASE_URL}/ws`;
+      console.log('WebSocket connecting to:', wsUrl);
 
-    ws.onopen = () => {
-      console.log('WebSocket connected for violations');
-    };
+      ws = new WebSocket(wsUrl);
 
-    ws.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        if (message.type === 'violation') {
-          const { data } = message;
-          const violationType = data.violation_type.replace('_', ' ').toUpperCase();
-          showToast(`Violation detected on Stream ${data.stream_id + 1}: ${violationType}`, 'error');
-          
-          // Play notification alert sound using Web Audio API
-          try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            // Notification-style beep pattern
-            oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // A5 note
-            oscillator.type = 'sine';
-            
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.3);
-            
-            // Second beep
-            setTimeout(() => {
-              const osc2 = audioContext.createOscillator();
-              const gain2 = audioContext.createGain();
-              osc2.connect(gain2);
-              gain2.connect(audioContext.destination);
-              osc2.frequency.setValueAtTime(1100, audioContext.currentTime); // Higher pitch
-              osc2.type = 'sine';
-              gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
-              gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-              osc2.start(audioContext.currentTime);
-              osc2.stop(audioContext.currentTime + 0.3);
-            }, 150);
-          } catch (audioError) {
-            console.error('Error playing notification sound:', audioError);
+      ws.onopen = () => {
+        console.log('WebSocket connected for violations');
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          if (message.type === 'violation') {
+            const { data } = message;
+            const violationType = (data.violation_type || '').replace(/_/g, ' ').toUpperCase();
+            showToast(`Violation: ${violationType} on Stream ${data.stream_id + 1}`, 'error');
+
+            // Beep sound
+            try {
+              const ac = new (window.AudioContext || window.webkitAudioContext)();
+              const osc = ac.createOscillator();
+              const gain = ac.createGain();
+              osc.connect(gain);
+              gain.connect(ac.destination);
+              osc.frequency.setValueAtTime(880, ac.currentTime);
+              osc.type = 'sine';
+              gain.gain.setValueAtTime(0.3, ac.currentTime);
+              gain.gain.exponentialRampToValueAtTime(0.01, ac.currentTime + 0.3);
+              osc.start(ac.currentTime);
+              osc.stop(ac.currentTime + 0.3);
+            } catch (e) { /* ignore audio errors */ }
           }
+        } catch (error) {
+          console.error('Error parsing WebSocket message:', error);
         }
-      } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
-      }
+      };
+
+      ws.onclose = () => {
+        console.log('WebSocket disconnected, reconnecting in 3s...');
+        if (isMounted) {
+          reconnectTimer = setTimeout(connect, 3000);
+        }
+      };
+
+      ws.onerror = () => {
+        ws.close();
+      };
     };
 
-    ws.onclose = () => {
-      console.log('WebSocket disconnected');
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+    connect();
 
     return () => {
-      ws.close();
+      isMounted = false;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      if (ws) ws.close();
     };
-  }, [API_BASE_URL]);
+  }, [WS_BASE_URL]);
 
   return (
     <div className="dashboard-body">
