@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import { useConfig } from '../context/ConfigContext';
 import { formatTime, formatSpeed } from '../utils/helpers';
+import '../styles/analytics.css';
 
 const Dashboard = () => {
   const { getAuthHeaders } = useAuth();
@@ -38,42 +39,29 @@ const Dashboard = () => {
   return (
     <div className="dashboard-body">
       <Navbar isDashboard={true} />
+      
 
       <div className="dashboard-main">
-        <section className="content-section">
-          <div className="section-header">
-            <h2 className="section-title">
-              <i className="fas fa-heart-pulse"></i>
-              Current Status
-            </h2>
+        <div className="dash-status">
+          <h3 className="dash-status-title">Current Status</h3>
+          <div className="dash-chips">
+            {[
+              { icon: 'fa-video', label: 'Streams', value: stats.active_streams || 0 },
+              { icon: 'fa-car', label: 'Vehicles', value: stats.total_vehicles || 0 },
+              { icon: 'fa-exclamation-triangle', label: 'Total', value: stats.total_violations || 0 },
+              { icon: 'fa-traffic-light', label: 'Red Light', value: stats.violation_summary?.red_light || 0 },
+              { icon: 'fa-stop', label: 'Stop Line', value: stats.violation_summary?.stop_line || 0 },
+              { icon: 'fa-right-left', label: 'Lane', value: stats.violation_summary?.lane_change || 0 },
+              { icon: 'fa-car-burst', label: 'Distance', value: stats.violation_summary?.unsafe_distance || 0 },
+            ].map((c, i) => (
+              <div className="dash-chip" key={i}>
+                <i className={`fas ${c.icon}`}></i>
+                <span className="dash-chip-val">{c.value}</span>
+                <span className="dash-chip-lbl">{c.label}</span>
+              </div>
+            ))}
           </div>
-          <div className="stats-grid">
-            <div className="stat-card">
-              <i className="fas fa-video stat-card-icon"></i>
-              <div className="stat-card-label">Online Streams</div>
-              <div className="stat-card-value">{stats.active_streams || 0}</div>
-              <div className="stat-card-unit">Processing Live</div>
-            </div>
-            <div className="stat-card">
-              <i className="fas fa-car-on stat-card-icon"></i>
-              <div className="stat-card-label">Today's Traffic</div>
-              <div className="stat-card-value">{stats.total_vehicles || 0}</div>
-              <div className="stat-card-unit">Vehicles Detected</div>
-            </div>
-            <div className="stat-card">
-              <i className="fas fa-triangle-exclamation stat-card-icon"></i>
-              <div className="stat-card-label">Today's Violations</div>
-              <div className="stat-card-value">{stats.total_violations || 0}</div>
-              <div className="stat-card-unit">Alerts Generated</div>
-            </div>
-            <div className="stat-card">
-              <i className="fas fa-gauge-simple-high stat-card-icon"></i>
-              <div className="stat-card-label">Critical Speeding</div>
-              <div className="stat-card-value">{stats.violation_summary?.speed || 0}</div>
-              <div className="stat-card-unit">Major Incidents</div>
-            </div>
-          </div>
-        </section>
+        </div>
 
         <section className="content-section">
           <div className="section-header">
@@ -82,37 +70,42 @@ const Dashboard = () => {
               Live Alert Feed
             </h2>
           </div>
-          <div className="table-container">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Source Stream</th>
-                  <th>Alert Type</th>
-                  <th>Detected Speed</th>
-                  <th>Timestamp</th>
-                </tr>
-              </thead>
-              <tbody>
-                {violations.length === 0 ? (
+          <div className="a-card">
+            <div className="a-table-scroll">
+              <table className="a-table a-table-simple">
+                <thead>
                   <tr>
-                    <td colSpan="4" className="table-empty-state">
-                      <i className="fas fa-inbox"></i>
-                      <p>No violations</p>
-                    </td>
+                    <th>#</th>
+                    <th>Stream</th>
+                    <th>Violation Type</th>
+                    <th>Signal State</th>
+                    <th>Time</th>
                   </tr>
-                ) : (
-                  violations.map((v, index) => (
-                    <tr key={index}>
-                      <td>Stream {v.stream_id + 1}</td>
-
-                      <td>{(v.violation_type || '').replace('_', ' ').toUpperCase()}</td>
-                      <td>{formatSpeed(v.speed_kmh)}</td>
-                      <td>{formatTime(v.timestamp)}</td>
+                </thead>
+                <tbody>
+                  {violations.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="a-table-empty">
+                        <div>
+                          <i className="fas fa-inbox"></i>
+                          <p>No violations</p>
+                        </div>
+                      </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    violations.map((v, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>Stream {v.stream_id + 1}</td>
+                        <td>{(v.violation_type || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</td>
+                        <td>{v.signal_state || 'N/A'}</td>
+                        <td>{formatTime(v.timestamp)}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
       </div>

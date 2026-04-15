@@ -1,0 +1,648 @@
+/* =====================================================
+   ANALYTICS PAGE — Dedicated Stylesheet
+   Uses root variables from styles.css
+   ===================================================== */
+
+/* ── Page Shell ── */
+.a-page {
+    margin-top: 70px;
+    padding: 2rem 2.5rem 3rem;
+    max-width: 1360px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ── Top Bar: Heading + Filter ── */
+.a-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.a-heading {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 0.15rem;
+    letter-spacing: -0.3px;
+}
+
+.a-subtext {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.a-filters {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.a-select-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.a-select-wrap i {
+    position: absolute;
+    left: 0.9rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.a-select-wrap select {
+    padding: 0.55rem 1rem 0.55rem 2.3rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: var(--white-bg);
+    cursor: pointer;
+    transition: var(--transition);
+    appearance: auto;
+}
+
+.a-select-wrap select:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(124, 179, 66, 0.12);
+}
+
+.a-date-pick {
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    color: var(--text-primary);
+    background: var(--white-bg);
+    transition: var(--transition);
+}
+
+.a-date-pick:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(124, 179, 66, 0.12);
+}
+
+.a-refresh-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--light-gray);
+    border-radius: 8px;
+    background: var(--white-bg);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.85rem;
+}
+
+.a-refresh-btn:hover {
+    border-color: var(--primary-green);
+    color: var(--primary-green);
+    background: rgba(124, 179, 66, 0.04);
+}
+
+/* ── Metric Cards Row ── */
+.a-metrics {
+    display: grid;
+    grid-template-columns: 1fr repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
+
+/* Hero total card */
+.a-metric-hero {
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-dark) 100%);
+    border-radius: var(--border-radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    box-shadow: 0 4px 14px rgba(124, 179, 66, 0.3);
+}
+
+.a-metric-hero-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.a-metric-hero-data {
+    display: flex;
+    flex-direction: column;
+}
+
+.a-metric-hero-num {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+}
+
+.a-metric-hero-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+    margin-top: 0.15rem;
+}
+
+/* Individual violation cards */
+.a-metric-card {
+    background: var(--white-bg);
+    border: 1px solid var(--light-gray);
+    border-radius: var(--border-radius);
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.a-metric-card:hover {
+    border-color: var(--primary-green);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.a-metric-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.a-metric-icon-sm {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.a-metric-pct {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.a-metric-num {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 0.1rem;
+}
+
+.a-metric-label {
+    font-size: 0.73rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* ── Shared Card ── */
+.a-card {
+    background: var(--white-bg);
+    border: 1px solid var(--light-gray);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.a-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.a-card-grow {
+    flex: 1;
+}
+
+.a-card-head {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--light-gray);
+    background: var(--white-bg);
+}
+
+.a-card-head h3 {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.a-card-head h3 i {
+    color: var(--primary-green);
+    font-size: 0.88rem;
+}
+
+.a-card-head-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.a-card-body {
+    padding: 1.25rem 1.5rem;
+    position: relative;
+}
+
+/* Chart heights — keeps consistent aspect across cards */
+.a-chart-tall  { height: 280px; }
+.a-chart-mid   { height: 260px; }
+.a-chart-short { height: 220px; }
+
+.a-donut-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Rows ── */
+.a-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.a-row-2col > .a-card {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ── Table ── */
+.a-record-count {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    background: var(--light-bg);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.a-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.a-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 540px;
+}
+
+.a-table-simple th,
+.a-table-simple td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--light-gray);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.a-table-simple th {
+    background: var(--light-bg);
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.a-table-simple tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.a-table-simple tbody tr:hover {
+    background: rgba(0, 0, 0, 0.015);
+}
+
+.a-table-simple tbody tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.01);
+}
+
+.a-table-empty {
+    text-align: center;
+    padding: 3rem 1rem !important;
+    color: var(--text-muted);
+}
+
+.a-table-empty i {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    opacity: 0.35;
+}
+
+.a-table-empty p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* ── Pagination ── */
+.a-pager {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1.5rem;
+    border-top: 1px solid var(--light-gray);
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.a-pager-info {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.a-pager-btns {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.a-pg-btn {
+    min-width: 34px;
+    height: 34px;
+    border: 1px solid var(--light-gray);
+    background: var(--white-bg);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: var(--transition);
+}
+
+.a-pg-btn:hover:not(:disabled):not(.a-pg-active) {
+    border-color: var(--primary-green);
+    color: var(--primary-green);
+    background: rgba(124, 179, 66, 0.05);
+}
+
+.a-pg-active {
+    background: var(--primary-green) !important;
+    color: #fff !important;
+    border-color: var(--primary-green) !important;
+}
+
+.a-pg-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+/* Large tablets / small desktops */
+@media (max-width: 1100px) {
+    .a-metrics {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .a-metric-hero {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    .a-page {
+        padding: 1.25rem 1rem 2rem;
+    }
+
+    .a-top {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .a-heading {
+        font-size: 1.4rem;
+    }
+
+    .a-filters {
+        width: 100%;
+    }
+
+    .a-select-wrap {
+        flex: 1;
+    }
+
+    .a-select-wrap select {
+        width: 100%;
+    }
+
+    .a-date-pick {
+        flex: 1;
+    }
+
+    .a-metrics {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    .a-metric-hero {
+        grid-column: 1 / -1;
+    }
+
+    .a-row {
+        flex-direction: column;
+    }
+
+    .a-row-2col > .a-card {
+        flex: none;
+    }
+
+    .a-chart-tall  { height: 220px; }
+    .a-chart-mid   { height: 220px; }
+    .a-chart-short { height: 180px; }
+
+    .a-card-body {
+        padding: 1rem;
+    }
+
+    .a-card-head {
+        padding: 0.85rem 1rem;
+    }
+
+    .a-table th,
+    .a-table td {
+        padding: 0.6rem 0.9rem;
+    }
+
+    .a-pager {
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+    .a-page {
+        padding: 1rem 0.75rem 1.5rem;
+    }
+
+    .a-heading {
+        font-size: 1.2rem;
+    }
+
+    .a-metrics {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+    }
+
+    .a-metric-card {
+        padding: 0.7rem 0.8rem;
+    }
+
+    .a-metric-num {
+        font-size: 1.15rem;
+    }
+
+    .a-metric-hero {
+        padding: 0.85rem 1rem;
+    }
+
+    .a-metric-hero-num {
+        font-size: 1.3rem;
+    }
+
+    .a-chart-tall  { height: 180px; }
+    .a-chart-mid   { height: 180px; }
+    .a-chart-short { height: 150px; }
+
+    .a-pg-btn {
+        min-width: 30px;
+        height: 30px;
+        font-size: 0.78rem;
+    }
+
+    .a-table th,
+    .a-table td {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.8rem;
+    }
+
+    .a-badge {
+        font-size: 0.68rem;
+        padding: 0.2rem 0.5rem;
+    }
+}
+
+/* Very small phones */
+@media (max-width: 360px) {
+    .a-page {
+        padding: 0.75rem 0.5rem 1rem;
+    }
+
+    .a-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .a-metric-hero {
+        grid-column: 1;
+    }
+}
+
+/* =====================================================
+   DASHBOARD — Status Chips
+   ===================================================== */
+
+.dash-status {
+    padding: 0 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.dash-status-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 0.6rem;
+}
+
+.dash-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.dash-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--white-bg);
+    border: 1px solid var(--light-gray);
+    border-radius: 8px;
+    padding: 0.5rem 0.85rem;
+    transition: var(--transition);
+    cursor: default;
+}
+
+.dash-chip:hover {
+    border-color: var(--primary-green);
+    background: rgba(124, 179, 66, 0.03);
+}
+
+.dash-chip i {
+    font-size: 0.8rem;
+    color: var(--primary-green);
+}
+
+.dash-chip-val {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.dash-chip-lbl {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+@media (max-width: 480px) {
+    .dash-chips {
+        gap: 0.35rem;
+    }
+    .dash-chip {
+        padding: 0.3rem 0.5rem;
+        gap: 0.25rem;
+    }
+    .dash-chip-val {
+        font-size: 0.75rem;
+    }
+    .dash-chip-lbl {
+        font-size: 0.58rem;
+    }
+}

@@ -180,18 +180,25 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .section-title i { font-size: 2rem; color: var(--primary-green); }
 
-.card, .stat-card {
+.card {
     background: var(--white-bg); border: 1px solid var(--light-gray);
     border-radius: var(--border-radius); padding: 2rem; transition: var(--transition); box-shadow: var(--shadow-sm);
 }
-.card:hover, .stat-card:hover {
+.stat-card {
+    background: var(--white-bg); border: 1px solid var(--light-gray);
+    border-radius: 8px; padding: 0.55rem 0.7rem; transition: var(--transition); box-shadow: var(--shadow-sm);
+}
+.card:hover {
     border-color: var(--primary-green); box-shadow: var(--shadow-md); transform: translateY(-3px);
+}
+.stat-card:hover {
+    border-color: var(--primary-green); box-shadow: var(--shadow-sm); transform: translateY(-1px);
 }
 .card-title { font-size: 1.4rem; font-weight: 700; color: var(--text-primary); }
 .card p { color: var(--text-secondary); line-height: 1.8; margin-bottom: 1rem; }
 
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
-.stat-card { text-align: center; }
+.stats-grid { display: flex; gap: 0.75rem; flex-wrap: nowrap; overflow-x: auto; }
+.stat-card { text-align: center; flex: 1 1 0; min-width: 0; padding: 1rem 0.75rem; }
 .stat-card:hover { background: rgba(124, 179, 66, 0.03); }
 .stat-icon { font-size: 2.5rem; color: var(--primary-green); margin-bottom: 1rem; }
 .stat-label { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.8rem; }
@@ -403,7 +410,8 @@ img { max-width: 100%; height: auto; display: block; }
     .hero-actions .btn { width: 100%; }
 
     /* Stats Grid */
-    .stats-grid { grid-template-columns: 1fr; }
+    .stats-grid { flex-wrap: wrap; }
+    .stat-card { flex: 1 1 calc(33% - 0.5rem); min-width: 75px; }
     
     /* Footer */
     .footer-content { grid-template-columns: 1fr; text-align: center; }
@@ -464,30 +472,32 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 /* Stat Cards (Specific to Dashboard) */
-.stat-card-icon {
-    font-size: 2.2rem;
-    color: var(--primary-green);
-    margin-bottom: 1rem;
+.stat-card-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
 }
 
-.stat-card-label {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
+.stat-card-icon {
+    font-size: 0.75rem;
+    color: var(--primary-green);
 }
 
 .stat-card-value {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: var(--primary-green);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
     line-height: 1;
-    margin-bottom: 0.5rem;
 }
 
-.stat-card-unit {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+.stat-card-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
 /* Update this rule */
@@ -733,116 +743,17 @@ img { max-width: 100%; height: auto; display: block; }
     font-size: 0.9rem;
 }
 
-/* ==================== ANALYTICS PAGE STYLES ==================== */
-
-/* Filter Container (Date Range) */
-.filter-container {
-    display: flex;
-    gap: 1rem;
-    background: var(--white-bg);
-    padding: 1.5rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--light-gray);
-    flex-wrap: wrap; /* Allow wrapping on mobile */
-    align-items: center;
-}
-
-.form-select, .form-input[type="date"] {
-    padding: 0.8rem 1rem;
-    border: 1px solid var(--light-gray);
-    border-radius: 6px;
-    font-size: 0.95rem;
-    background-color: var(--white-bg);
-    color: var(--text-primary);
-    cursor: pointer;
-    flex: 1; /* Grow to fill space */
-    min-width: 200px; /* Prevent becoming too narrow */
-}
-
-.form-select:focus, .form-input:focus {
-    outline: none;
-    border-color: var(--primary-green);
-    box-shadow: 0 0 0 3px rgba(124, 179, 66, 0.1);
-}
-
-/* Table Container (Responsive Scrolling) */
-.table-container {
-    background: var(--white-bg);
-    border-radius: var(--border-radius);
-    border: 1px solid var(--light-gray);
-    overflow: hidden; /* Hide corner overflow */
-    box-shadow: var(--shadow-sm);
-}
-
-/* Ensure table scrolls horizontally on small screens */
-.table-container {
-    overflow-x: auto; 
-    -webkit-overflow-scrolling: touch;
-}
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 600px; /* Force scroll on mobile */
-}
-
-.data-table th, .data-table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--light-gray);
-}
-
-.data-table th {
-    background: #f8f9fa;
-    font-weight: 600;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.data-table td {
-    color: var(--text-primary);
-    font-size: 0.95rem;
-}
-
-.data-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.data-table tbody tr:hover {
-    background-color: rgba(0,0,0,0.01);
-}
-
-/* ==================== RESPONSIVE TWEAKS FOR THESE PAGES ==================== */
+/* ==================== RESPONSIVE TWEAKS FOR OTHER PAGES ==================== */
 
 @media (max-width: 768px) {
     /* Monitoring Page: Single column streams */
     .stream-grid {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
     }
-    
+
     .stream-actions {
-        flex-direction: row; /* Keep buttons side-by-side if they fit, or wrap */
+        flex-direction: row;
         flex-wrap: wrap;
-    }
-
-    /* Analytics Page: Stack filters */
-    .filter-container {
-        flex-direction: column;
-        align-items: stretch; /* Full width inputs */
-        gap: 0.8rem;
-    }
-
-    .form-select, .form-input[type="date"] {
-        width: 100%;
-        min-width: 0;
-    }
-
-    /* Adjust Chart Heights for Mobile */
-    .chart-card canvas {
-        max-height: 250px;
     }
 }
 
@@ -1223,11 +1134,19 @@ img { max-width: 100%; height: auto; display: block; }
 
 @media (max-width: 768px) {
     /* Force grids to single column on mobile */
-    .stream-grid, 
-    .chart-grid, 
-    .stats-grid, 
+    .stream-grid,
+    .chart-grid,
     .feature-grid {
         grid-template-columns: 1fr !important;
+    }
+
+    .stats-grid {
+        flex-wrap: wrap !important;
+    }
+    .stats-grid .stat-card {
+        flex: 1 1 calc(33% - 0.5rem) !important;
+        min-width: 75px;
+        padding: 0.45rem 0.5rem;
     }
 
     /* Adjust padding for very small screens (320px) */
